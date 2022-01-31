@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:simpleblocproject/cep/presentation/alerts/alerts.dart';
 
 part 'cep_event.dart';
 part 'cep_state.dart';
@@ -10,22 +11,19 @@ class CepBloc extends Bloc<CepEvent, CepState> {
 
   @override
   Stream<CepState> mapEventToState(CepEvent event) async* {
-    // TODO: implement mapEventToState
     if (event is SearchCepEvent) {
-      yield CepLoadingState();
+      // Se o evento disparado é busca de cpf, execute este if.
+      yield CepLoadingState(); // Apresenta estado de carregamento na view
       await Future.delayed(Duration(seconds: 2));
+      // await, quando o corpo da função tem um async, é possível escrever códigos assincronos, como esperar 2 segundos...
       print(event.cep);
-
-      BuildContext context = event.context;
-      showModalBottomSheet(
-          context: context,
-          builder: (context) {
-            return Container(
-                color: Colors.white,
-                height: MediaQuery.of(context).size.height * 0.05,
-                child: Center(child: Text("Ocorreu um erro")));
-          });
-      yield CepInitialState();
+      CustomPopUpModel.showErrorPopUp(CustomPopUpModel(
+        backgroundColor: Colors.black, // Cor de fundo do popUp
+        textColor: Colors.white, // Cor do texto
+        text: "Ocorreu Um Erro", // Texto
+        tittle: "Erro ao buscar Cep", // Titulo
+      ));
+      yield CepInitialState(); // Retorna estado inicial após apresentar erro.
     }
   }
 }
